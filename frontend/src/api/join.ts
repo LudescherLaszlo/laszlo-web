@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+const base = import.meta.env.VITE_API_BASE || `http://${window.location.hostname}:8080`
 export async function joinGame(name: string): Promise<{ sessionId: string; playerId: string }> {
   const response = await fetch(`${base}/api/join`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) })
   const payload = await response.json().catch(() => ({ message: 'Unable to join the game.' }))

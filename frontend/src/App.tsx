@@ -19,8 +19,24 @@ function App() {
   const [startConfirm, setStartConfirm] = useState(false)
   const [pendingRemoval, setPendingRemoval] = useState<string | null>(null)
   useEffect(() => { if (sessionId) connect(sessionId) }, [sessionId, connect])
+  useEffect(() => {
+    const handlePageHide = () => useGameStore.getState().client?.close()
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        const currentSessionId = useGameStore.getState().sessionId
+        if (currentSessionId) useGameStore.getState().connect(currentSessionId)
+      }
+    }
+    window.addEventListener('pagehide', handlePageHide)
+    window.addEventListener('pageshow', handlePageShow)
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide)
+      window.removeEventListener('pageshow', handlePageShow)
+    }
+  }, [])
   const names = useMemo(() => new Map(publicState?.players.map(player => [player.id, player.name]) || []), [publicState])
-  if (!sessionId || !privateState || !publicState) return <Landing onJoined={connect} />
+  if (!sessionId) return <Landing onJoined={connect} />
+  if (!privateState || !publicState) return <main className="grid min-h-screen place-items-center p-5 text-sm text-muted-foreground">Connecting to the game...</main>
   const command = (destination: string, body?: object) => send(destination, body)
   const remove = (id: string) => setPendingRemoval(id)
   const onRemove = () => { if (pendingRemoval) command('/app/remove-player', { playerId: pendingRemoval }); setPendingRemoval(null) }

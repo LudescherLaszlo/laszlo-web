@@ -74,7 +74,7 @@ public class GameService {
         lastAction=System.currentTimeMillis();
         try {
             switch(command) {
-                case "sync" -> send(session);
+                case "sync" -> sync(session);
                 case "leave" -> remove(p);
                 case "start" -> start(p, ((CommandPayloads.Start)payload).expectedCount());
                 case "assignment-ready" -> assignmentReady(p);
@@ -123,6 +123,7 @@ public class GameService {
     private void require(boolean ok){if(!ok)throw invalid();} private IllegalStateException invalid(){return new IllegalStateException("That action is no longer available.");}
     private void changed(){version++;broadcast();}
     private void broadcast(){messaging.convertAndSend("/topic/game",snapshot());for(Player p:bySession.values())send(p.getSessionId());}
+    private void sync(String session){messaging.convertAndSend("/topic/game",snapshot());send(session);}
     private void send(String session){PrivateState state=privateState(session);if(state!=null)messaging.convertAndSendToUser(session,"/queue/private",state);}
     private void error(String session,String text){messaging.convertAndSendToUser(session,"/queue/errors",Map.of("message",text==null?"That action is no longer available.":text));}
     private PublicState snapshot(){List<PublicState.PlayerView> ps=bySession.values().stream().map(p->new PublicState.PlayerView(p.getId(),p.getName(),p.getStatus(),p.isConnected(),p.getDisconnectedSince()==null?null:p.getDisconnectedSince().toEpochMilli(),p.getStatus()==PlayerStatus.ALIVE?null:p.getRole())).toList();return new PublicState(version,System.currentTimeMillis(),phase,round,minPlayers,maxPlayers,ps,List.copyOf(speakingOrder),currentSpeaker,null,null,null,null,null,null,victoryType==null?null:new PublicState.VictoryView(victoryType,abortedBy,civilianWord,undercoverWord,bySession.values().stream().map(p->new PublicState.VictoryPlayer(p.getId(),p.getName(),p.getRole(),p.getStatus()==PlayerStatus.ALIVE)).toList()),null);}
