@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: mr-white
+  datasource:
+    url: jdbc:h2:mem:mrwhite;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  profiles:
+    group:
+      prod: prod
+mrwhite:
+  minPlayers: 3
+  maxPlayers: 30
+  nameMaxLength: 20
+  inactivityResetMinutes: 30
+  lobbyDisconnectSeconds: 60
+  removeAfterDisconnectSeconds: 60
+  waitingRoomDisconnectMinutes: 10
+  postgameReturnMinutes: 10
+  revealSeconds: 8
+  wheelDurationMs: 6000
+  recentPairsExcluded: 10
+  allowedOrigin: http://localhost:5173
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
