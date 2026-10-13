@@ -1,0 +1,1 @@
+export function ConnectionBanner({ reconnecting }: { reconnecting: boolean }) { return reconnecting ? <div className="bg-amber-500/15 px-4 py-2 text-center text-sm text-amber-700 dark:text-amber-300">Reconnecting...</div> : null }

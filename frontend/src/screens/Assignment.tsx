@@ -1,0 +1,4 @@
+import { WordCard } from '../components/WordCard'
+import { Button } from '../components/ui/button'
+import type { PrivateState, PublicState } from '../types'
+export function Assignment({ state, privateState, onReady, onGuess }: { state: PublicState; privateState: PrivateState; onReady: () => void; onGuess: () => void }) { return <div className="space-y-5"><header><p className="text-sm text-muted-foreground">Round {state.round}</p><h1 className="text-3xl font-bold">Your secret word</h1><p className="mt-2 text-muted-foreground">Keep it secret. Tap the card when you’re ready.</p></header><WordCard privateState={privateState} onGuess={onGuess} /><Button className="h-12 w-full" disabled={!privateState.can.assignmentReady} onClick={onReady}>I've seen my word</Button><p className="text-center text-sm text-muted-foreground">{state.ready?.readyCount || 0} / {state.ready?.totalRequired || state.players.length} players ready</p></div> }

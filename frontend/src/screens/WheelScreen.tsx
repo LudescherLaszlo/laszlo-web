@@ -1,0 +1,3 @@
+import { Wheel } from '../components/Wheel'
+import type { PrivateState, PublicState } from '../types'
+export function WheelScreen({ state, privateState, offset }: { state: PublicState; privateState: PrivateState; offset: number }) { if (!state.wheel) return null; const names = new Map(state.players.map(player => [player.id, player.name])); return <div className="space-y-5 text-center"><p className="text-sm text-muted-foreground">The votes are tied</p><h1 className="text-3xl font-bold">Wheel of fortune</h1><Wheel wheel={state.wheel} names={names} offset={offset} /><p className="text-muted-foreground">The server is choosing the player...</p>{privateState.me.status === 'SPECTATOR' && <p className="text-sm text-muted-foreground">You are spectating.</p>}</div> }

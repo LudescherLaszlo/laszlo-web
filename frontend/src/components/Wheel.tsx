@@ -1,0 +1,7 @@
+import { useEffect, useState } from 'react'
+import type { PublicState } from '../types'
+export function Wheel({ wheel, names, offset }: { wheel: NonNullable<PublicState['wheel']>; names: Map<string, string>; offset: number }) {
+  const [rotation, setRotation] = useState(0)
+  useEffect(() => { const delay = Math.max(0, wheel.startAt - (Date.now() + offset)); const timer = window.setTimeout(() => { const index = wheel.candidateIds.indexOf(wheel.winnerId); setRotation(1440 + index * (360 / wheel.candidateIds.length)) }, delay); return () => window.clearTimeout(timer) }, [wheel, offset])
+  return <div className="relative mx-auto h-64 w-64"><div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-8 border-b-[18px] border-x-transparent border-b-primary" /><svg viewBox="0 0 200 200" className="h-full w-full transition-transform ease-out" style={{ transform: `rotate(${rotation}deg)`, transitionDuration: `${wheel.durationMs}ms` }}><circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" strokeWidth="3" />{wheel.candidateIds.map((id, index) => { const angle = index * 360 / wheel.candidateIds.length; return <g key={id} transform={`rotate(${angle} 100 100)`}><path d="M100 100 L100 6 A94 94 0 0 1 100 6" fill={index % 2 ? 'hsl(var(--muted))' : 'hsl(var(--primary) / .12)'} /><text x="100" y="24" textAnchor="middle" className="fill-current text-[8px]">{names.get(id)}</text></g> })}</svg></div>
+}

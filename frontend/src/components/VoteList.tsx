@@ -1,0 +1,4 @@
+import { Button } from './ui/button'
+export function VoteList({ ids, names, selected, locked, onSelect, onConfirm }: { ids: string[]; names: Map<string, string>; selected: string | null; locked: boolean; onSelect: (id: string) => void; onConfirm: () => void }) {
+  return <div className="space-y-2">{ids.map(id => <button key={id} disabled={locked} onClick={() => onSelect(id)} className={`flex w-full items-center justify-between rounded-xl border p-4 text-left ${selected === id ? 'border-primary bg-primary/10' : 'hover:bg-muted'}`}><span>{names.get(id) || 'Unknown player'}</span>{selected === id && <span className="text-xs font-medium">Selected</span>}</button>)}{!locked && <Button className="mt-3 w-full" disabled={!selected} onClick={onConfirm}>Confirm vote</Button>}{locked && <p className="text-center text-sm text-muted-foreground">Your vote is locked.</p>}</div>
+}
